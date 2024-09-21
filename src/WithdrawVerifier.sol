@@ -8,5 +8,5 @@ contract WithdrawVerifier {
         // bytes32 root,
         // bytes32[] memory proof
     // ) public view returns (bool)
-    function verify(bytes calldata _proof, bytes32[] memory _publicInputs) public view returns (bool) {
+    function verify(bytes calldata _proof, bytes32[] memory _publicInputs) public view returns (bool) {}
 }
