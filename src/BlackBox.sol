@@ -101,7 +101,7 @@ contract BlackBox is DepositVerifier, WithdrawVerifier {
         assembly {
             let ptr := mload(0x40)
             // query current balance of this contract
-            mstore(ptr, shl(224, _BALANCE_OF_SIG))
+            mstore(ptr, _BALANCE_OF_SIG)
             mstore(add(ptr, 0x04), address())
             if iszero(call(gas(), TOKEN, 0, ptr, 0x24, add(ptr, 0x24), 0x20)) { revert(0, 0) }
             let currentBalance := mload(add(ptr, 0x24))
@@ -113,7 +113,7 @@ contract BlackBox is DepositVerifier, WithdrawVerifier {
             // return excess TOKEN (if any): received - value
             if lt(received, value) {
                 let excess := sub(value, received)
-                mstore(ptr, shl(224, _TRANSFER_SIG))
+                mstore(ptr,  _TRANSFER_SIG)
                 mstore(add(ptr, 0x04), address())
                 if iszero(call(gas(), TOKEN, 0, ptr, 0x24, ptr, 0x20)) { revert(0, 0) }
                 received := sub(received, excess)
@@ -168,7 +168,7 @@ contract BlackBox is DepositVerifier, WithdrawVerifier {
             sstore(NULLIFIER_SLOT, true)
             // send withdraw call to TOKEN
             let ptr := mload(0x40)
-            mstore(ptr, shl(224, TRANSFER_SIG))
+            mstore(ptr, TRANSFER_SIG)
             mstore(add(ptr, 0x04), TOKEN)
             mstore(add(ptr, 0x24), value)
             if iszero(call(gas(), TOKEN, 0, ptr, 0x44, 0, 0)) { revert(0, 0) }
