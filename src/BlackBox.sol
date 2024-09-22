@@ -22,7 +22,7 @@ import { WithdrawVerifier } from "./WithdrawVerifier.sol";
   *
   * @notice Privacy market-maker
   *
-  * @dev This system makes use of pedersen commitments containing :
+  * @dev This system makes use of hash commitments containing :
   *
   *      - a secret note
   *      - the value sent
@@ -71,9 +71,9 @@ contract BlackBox is DepositVerifier, WithdrawVerifier {
       * @notice Send ETH into the blackbox to buy TOKEN.
       *
       * @dev During a bonding-curve deposit, the user sends a valid commitment
-      *      containing the note, the value sent and the nullifier, along with
-      *      the new merkle-tree root after the commitment inclusion, and a zk
-      *      proof of integrity, specifically:
+      *      of the tuple (note, value, nullifier), along with the new merkle-
+      *      tree root after the commitment inclusion, and a zk proof of
+      *      integrity, specifically:
       *
       *      - the commitment holds the correct amount
       *      - the new root is derived by a valid state transition from the
@@ -83,11 +83,15 @@ contract BlackBox is DepositVerifier, WithdrawVerifier {
       *      and the nullifier in order to construct a valid commitment.
       *      These must be securely kept to be able to withdraw later.
       *
-      * @param commitment The merkle-tree leaf commitment to the deposit.
+      * @param commitment The merkle-tree leaf commitment to the deposit
       *
-      * @param newRoot The new root of the merkle tree after the leaf insertion.
+      * @param value The amount of blinded TOKEN received
+      *
+      * @param newRoot The new root of the merkle tree after the leaf insertion
       *
       * @param proof The proof of integrity
+      *
+      * @return true if the deposit is valid, false otherwise
       */
     function deposit(
         bytes32 commitment,
@@ -150,6 +154,8 @@ contract BlackBox is DepositVerifier, WithdrawVerifier {
       * @param nullifier The nullifier of the withdrawal
       *
       * @param proof The proof of integrity
+      *
+      * @return true if the withdraw is valid, false otherwise
       */
     function withdraw(uint256 value, bytes32 nullifier, bytes32[] memory proof) external returns (bool) {
         bytes32[] memory verifierInputs = new bytes32[](3);
